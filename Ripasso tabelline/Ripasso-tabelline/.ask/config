@@ -1,0 +1,9 @@
+{
+  "deploy_settings": {
+    "AlexaSkills": {
+      "skill_id": "amzn1.ask.skill.2ac6eae7-15c3-4272-9f3f-35b94ccff3fc",
+      "was_cloned": false,
+      "merge": {}
+    }
+  }
+}
