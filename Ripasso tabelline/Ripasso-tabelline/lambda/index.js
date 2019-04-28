@@ -20,8 +20,7 @@ const dataIncorrectResult = [
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest' || 
-            handlerInput.requestEnvelope.request.type === 'AMAZON.StartOverIntent' ||
-            handlerInput.requestEnvelope.request.type === 'AMAZON.HelpIntent';
+            handlerInput.requestEnvelope.request.type === 'AMAZON.StartOverIntent';
   },
   handle(handlerInput) {    
     initializeSessionVariables(handlerInput);
@@ -34,6 +33,23 @@ const LaunchRequestHandler = {
       .getResponse();
   },
 };
+
+const HelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent');
+  },
+  handle(handlerInput) {
+    var speechText = 'In questo gioco si devono sapere le tabelline che ti chiedo. Semplice no?';
+    speechText += ' Quindi, <break time="1s" /> ' + giveLastOperation(handlerInput);
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withShouldEndSession(false)
+      .getResponse();
+  },
+};
+
 
 const ResultIntentHandler = {
   canHandle(handlerInput) {
@@ -82,6 +98,7 @@ const HelpMeIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'HelpMe';
   },
   handle(handlerInput) {
+    
     var speechText = 'Il risultato è ' + givenTheLastResult(handlerInput);
 
     incrementHintsCounter(handlerInput);
@@ -104,6 +121,7 @@ const HelpMeIntentHandler = {
       .withShouldEndSession(false)
       .getResponse();
     }
+    
   },
 };
 
@@ -151,10 +169,11 @@ const skillBuilder = Alexa.SkillBuilders.custom();
 exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
-    ResultIntentHandler,
     HelpMeIntentHandler,
+    HelpIntentHandler,
     CancelAndStopIntentHandler,
-    SessionEndedRequestHandler
+    SessionEndedRequestHandler,
+    ResultIntentHandler
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
